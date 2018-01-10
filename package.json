@@ -1,0 +1,30 @@
+{
+  "name": "ejemplo-taller",
+  "version": "0.0.1",
+  "description": "Ejemplo para taller tech Hub",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://jcalizaya@bitbucket.org/jcalizaya/ejemplo-taller.git"
+  },
+  "keywords": [
+    "taller",
+    "tech",
+    "hub"
+  ],
+  "author": "JACP",
+  "license": "GPL-3.0",
+  "homepage": "https://bitbucket.org/jcalizaya/ejemplo-taller#readme",
+  "dependencies": {
+    "apidoc": "^0.17.6",
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "morgan": "^1.9.0",
+    "pg": "^7.4.1",
+    "pg-hstore": "^2.3.2",
+    "sequelize": "^4.29.2"
+  }
+}
