@@ -48,6 +48,38 @@ app.get("/", (req, res) => {
   res.end("***Aplicación NODEJS iniciada en EXPRESSJS\n");
 });
 
+/**
+ * @api {GET} /personas Permite obtener el listado de personas
+ *
+ * @apiName Obtener listado de personas
+ * @apiGroup Personas
+ * @apiVersion 1.0.0
+ *
+ * @apiSuccess {Object[]} . Array de datos de respuesta del servicio.
+ * @apiSuccess {String} .id_persona Identificador de la persona.
+ * @apiSuccess {String} .nombres Nombred de la persona.
+ * @apiSuccess {String} .apellidos Apellidos de la persona.
+ * @apiSuccess {String} .fecha_nacimiento Fecha de nacimiento de la persona.
+ * @apiSuccess {String} .createdAt Creado en.
+ * @apiSuccess {String} .updatedAt Actualizado en.
+ *
+ * @apiParamExample  {text} Obtener estado del servicio (CURL)
+ * curl -X GET \
+ *    'http://127.0.0.1:4000/personas'
+ *
+ * @apiSuccessExample {json} Respuesta exitosa
+ *  HTTP/1.1  200  OK
+ * [
+ *     {
+ *         "id_persona": 1,
+ *         "nombres": "Carlos Andrés",
+ *         "apellidos": "Perez Morales",
+ *         "fecha_nacimiento": "1986-01-01T04:00:00.000Z",
+ *         "createdAt": "2018-01-10T21:14:24.706Z",
+ *         "updatedAt": "2018-01-10T21:14:24.706Z"
+ *     }
+ * ] *
+ */
 app.get("/personas", (req, res) => {
   Promise.resolve()
     .then(() => listarPersonasPaginado(req.query.limite, req.query.intervalo))
