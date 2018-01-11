@@ -14,6 +14,9 @@ const db = require('./db');
 // Sincronizamos la base de datos
 db.sequelize.sync().done(() => {
   console.log("\n***Base de datos generada");
+  app.listen(4000, () => {
+    console.log('La aplicación esta escuchando en el puerto 4000!!!');
+  });
 });
 
 // Habilitamos los logs
@@ -49,11 +52,14 @@ app.get("/", (req, res) => {
 });
 
 /**
- * @api {GET} /personas Permite obtener el listado de personas
+ * @api {GET} /personas?limite=:limite&intervalo=:intervalo Listado
  *
  * @apiName Obtener listado de personas
  * @apiGroup Personas
  * @apiVersion 1.0.0
+ *
+ * @apiParam {String} limite Cantidad de datos que devolverá la solicitud
+ * @apiParam {String} intervalo Registro desde el cuál inicia la cantidad de datos que se devolverá
  *
  * @apiSuccess {Object[]} . Array de datos de respuesta del servicio.
  * @apiSuccess {String} .id_persona Identificador de la persona.
@@ -63,7 +69,7 @@ app.get("/", (req, res) => {
  * @apiSuccess {String} .createdAt Creado en.
  * @apiSuccess {String} .updatedAt Actualizado en.
  *
- * @apiParamExample  {text} Obtener estado del servicio (CURL)
+ * @apiParamExample  {text} Listado de personas (CURL)
  * curl -X GET \
  *    'http://127.0.0.1:4000/personas'
  *
@@ -89,14 +95,90 @@ app.get("/personas", (req, res) => {
     .catch(() => res.status(500).json('Error grave'));
 });
 
+/**
+ * @api {POST} /personas Registro
+ *
+ * @apiName Registro de una persona
+ * @apiGroup Personas
+ * @apiVersion 1.0.0
+ *
+ * @apiParam {String} nombres Nombres de la persona
+ * @apiParam {String} apellidos Apellidos de la persona
+ * @apiParam {String} fechaNacimiento Fecha de nacimiento de la persona
+ *
+ * @apiSuccess {String} id_persona Identificador de la persona.
+ * @apiSuccess {String} nombres Nombred de la persona.
+ * @apiSuccess {String} apellidos Apellidos de la persona.
+ * @apiSuccess {String} fecha_nacimiento Fecha de nacimiento de la persona.
+ * @apiSuccess {String} createdAt Creado en.
+ * @apiSuccess {String} updatedAt Actualizado en.
+ *
+ * @apiParamExample  {text} Registro de una persona (CURL)
+ * curl -X POST \
+ *   http://127.0.0.1:4000/personas \
+ *   -H 'content-type: application/json' \
+ *   -d '{
+ *       "nombres": "ENRIQUE",
+ *       "apellidos": "BOLAÑOZ",
+ *       "fechaNacimiento": "02/01/1980"
+ *   }'
+ *
+ * @apiSuccessExample {json} Respuesta exitosa
+ *  HTTP/1.1  201  CREATED
+ * {
+ *     "id_persona": 10,
+ *     "nombres": "ENRIQUE",
+ *     "apellidos": "BOLAÑOZ",
+ *     "fecha_nacimiento": "1980-02-01T04:00:00.000Z",
+ *     "updatedAt": "2018-01-11T03:31:15.518Z",
+ *     "createdAt": "2018-01-11T03:31:15.518Z"
+ * }
+ */
+
 app.post("/personas", (req, res) => {
   Promise.resolve()
     .then(() => crearPersona(req.body))
     .then((persona) => {
-      res.json(persona);
+      res.status(201).json(persona);
     })
     .catch(() => res.status(500).json('Error grave'));
 });
+
+/**
+ * @api {PATCH} /personas/:idPersona Modificación parcial
+ *
+ * @apiName Modificación del nombre de una persona
+ * @apiGroup Personas
+ * @apiVersion 1.0.0
+ *
+ * @apiParam {String} nombres Nombres de la persona
+ *
+ * @apiSuccess {String} id_persona Identificador de la persona.
+ * @apiSuccess {String} nombres Nombred de la persona.
+ * @apiSuccess {String} apellidos Apellidos de la persona.
+ * @apiSuccess {String} fecha_nacimiento Fecha de nacimiento de la persona.
+ * @apiSuccess {String} createdAt Creado en.
+ * @apiSuccess {String} updatedAt Actualizado en.
+ *
+ * @apiParamExample  {text} Modificación parcial de los datos de una persona (CURL)
+ * curl -X PATCH \
+ *   http://127.0.0.1:4000/personas/1 \
+ *   -H 'content-type: application/json' \
+ *   -d '{
+ *     "nombres": "JULIO"
+ *   }'
+ *
+ * @apiSuccessExample {json} Respuesta exitosa
+ *  HTTP/1.1  200  OK
+ * {
+ *     "id_persona": 1,
+ *     "nombres": "JULIO",
+ *     "apellidos": "SUAREZ SUAREZ",
+ *     "fecha_nacimiento": "1990-12-31T04:00:00.000Z",
+ *     "createdAt": "2018-01-10T14:08:25.232Z",
+ *     "updatedAt": "2018-01-11T00:21:08.817Z"
+ * }
+ */
 
 app.patch("/personas/:idPersona", (req, res) => {
   Promise.resolve()
@@ -113,6 +195,42 @@ app.patch("/personas/:idPersona", (req, res) => {
     });
 });
 
+/**
+ * @api {GET} /personas/:idPersona Obtener una persona
+ *
+ * @apiName Obtiene los datos de una persona particular
+ * @apiGroup Personas
+ * @apiVersion 1.0.0
+ *
+ * @apiParam {Integer} idPersona Identificador único de la persona
+ *
+ * @apiSuccess {String} id_persona Identificador de la persona.
+ * @apiSuccess {String} nombres Nombred de la persona.
+ * @apiSuccess {String} apellidos Apellidos de la persona.
+ * @apiSuccess {String} fecha_nacimiento Fecha de nacimiento de la persona.
+ * @apiSuccess {String} createdAt Creado en.
+ * @apiSuccess {String} updatedAt Actualizado en.
+ *
+ * @apiParamExample  {text} Obtención de los datos de una persona (CURL)
+ * curl -X GET \
+ *   http://127.0.0.1:4000/personas/1 \
+ *   -H 'content-type: application/json' \
+ *   -d '{
+ *     "nombres": "JULIO"
+ *   }'
+ *
+ * @apiSuccessExample {json} Respuesta exitosa
+ * HTTP/1.1  200  OK
+ * {
+ *     "id_persona": 1,
+ *     "nombres": "JULIO",
+ *     "apellidos": "SUAREZ SUAREZ",
+ *     "fecha_nacimiento": "1990-12-31T04:00:00.000Z",
+ *     "createdAt": "2018-01-10T14:08:25.232Z",
+ *     "updatedAt": "2018-01-11T00:21:08.817Z"
+ * }
+ */
+
 app.get("/personas/:idPersona", (req, res) => {
   Promise.resolve()
     .then(() => buscarPersona(req.params.idPersona))
@@ -124,6 +242,45 @@ app.get("/personas/:idPersona", (req, res) => {
     });
 });
 
+/**
+ * @api {GET} /personas/:idPersona/hobbies Listado de hobbies de una persona
+ *
+ * @apiName Obtiene los hobbies de una persona
+ * @apiGroup Hobbies
+ * @apiVersion 1.0.0
+ *
+ * @apiParam {Integer} idPersona Identificador único de la persona
+ *
+ * @apiSuccess {Object[]} . Array de datos de respuesta del servicio.
+ * @apiSuccess {String} .id_hobbie Identificador del hobbie.
+ * @apiSuccess {String} .descripcion Descripción del hobbie.
+ * @apiSuccess {String} .fid_persona Identificado de la persona relacionada con el hobbie.
+ * @apiSuccess {String} .createdAt Creado en.
+ * @apiSuccess {String} .updatedAt Actualizado en.
+ *
+ * @apiParamExample  {text} Obtención de los hobbies de una persona (CURL)
+ * curl -X GET \
+ *   http://127.0.0.1:4000/personas/1/hobbies
+ *
+ * @apiSuccessExample {json} Respuesta exitosa
+ * HTTP/1.1  200  OK
+ * [
+ *     {
+ *         "id_hobbie": 1,
+ *         "descripcion": "Comer",
+ *         "fid_persona": 1,
+ *         "createdAt": "2018-01-10T14:08:25.265Z",
+ *         "updatedAt": "2018-01-10T14:08:25.265Z"
+ *     },
+ *     {
+ *         "id_hobbie": 5,
+ *         "descripcion": "Pasear en  bicicleta",
+ *         "fid_persona": 1,
+ *         "createdAt": "2018-01-10T14:13:36.439Z",
+ *         "updatedAt": "2018-01-10T14:13:36.439Z"
+ *     }
+ * ]
+ */
 app.get("/personas/:idPersona/hobbies", (req, res) => {
   Promise.resolve()
     .then(() => listarHobbiesDePersona(req.params.idPersona))
@@ -296,4 +453,3 @@ function borrarHobbie() {
 }
 
 
-app.listen(4000);
